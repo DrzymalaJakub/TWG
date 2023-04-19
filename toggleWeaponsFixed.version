@@ -14,9 +14,9 @@
     # created after October 2012 will not have a Public folder, unfortunately.
     #
     # Example links for common hosts:
-    "masterVersionFile":"https://github.com/DrzymalaJakub/TWG",
+    "masterVersionFile":"https://github.com/DrzymalaJakub/TWG/blob/master/toggleWeapons.version",
 
-    "modName":"Toggle Weapon Group",
+    "modName":"Toggle Weapon Group Fixed",
 
     # The ID of the thread where updates to this mod can be found (optional).
     # This is used to launch directly to the forum thread from in the game.
