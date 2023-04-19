@@ -1,0 +1,28 @@
+{
+    "id":"author_modname", # For the convenience of troubleshooters, include your name and the mod name, not just an acronym.
+	"name":"Weapons Group Controls fixed", # Displayed to the player
+	"author":"stormbringer951, goldmaster",
+    "utility":"true",
+	"version":"1.1.1",
+	"description":"More weapon group controls.",
+    "gameVersion": "0.95.1a-RC6", 
+  	"jars":["jars/ToggleWeaponGroup.jar"],
+  	"modPlugin":"data.scripts.plugins.ToggleWeaponsModPlugin",
+	  	"dependencies": [
+        #{
+        #    "id": "lw_lazylib",
+        #    "name": "LazyLib",
+        #    #"version": "2.7b"
+        #},
+        #{
+        #    "id": "MagicLib",
+        #    "name": "MagicLib",
+        #    #"version": "0.34"
+        #},
+        #{
+        #    "id": "shaderLib",
+        #    "name": "GraphicsLib",
+        #    #"version": "1.5.1"
+        #}
+    ],
+}
