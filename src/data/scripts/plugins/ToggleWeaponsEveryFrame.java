@@ -24,6 +24,8 @@ public class ToggleWeaponsEveryFrame extends BaseEveryFrameCombatPlugin {
     private static int QUICK_HOLD_FIRE_KEY;
     private static int DESLECT_ALL_WEAPONS;
     private static int NUM_OF_WEAPON_GROUPS;
+    private static boolean IS_HOLD_A_TOGGLE;
+    private static int pressedCount = 0;//^used if this is true
 
     private static boolean QUICK_HOLD_GROUP[];
     private static boolean loadedIni = false;
@@ -37,6 +39,7 @@ public class ToggleWeaponsEveryFrame extends BaseEveryFrameCombatPlugin {
         QUICK_HOLD_FIRE_KEY = settingsFile.getInt("quickHoldFire");
         DESLECT_ALL_WEAPONS = settingsFile.getInt("deselectAllWeapons");
         NUM_OF_WEAPON_GROUPS = settingsFile.getInt("numberOfWeaponGroups");
+        IS_HOLD_A_TOGGLE = settingsFile.getBoolean("isHoldFireAToggle");
 
         QUICK_HOLD_GROUP = new boolean[NUM_OF_WEAPON_GROUPS];
         loadedIni = true;
@@ -74,17 +77,17 @@ public class ToggleWeaponsEveryFrame extends BaseEveryFrameCombatPlugin {
                     boolean hasIPDAI = player.getVariant().getHullMods().contains("pointdefenseai");
                     for (int i = 0; i < groups.size(); ++i) {
                         WeaponGroupAPI group = groups.get(i);
-                        QUICK_HOLD_GROUP[i] = group.isAutofiring(); 
+                        if(pressedCount == 0) QUICK_HOLD_GROUP[i] = group.isAutofiring();//to not reset toggle
 
                         if (QUICK_HOLD_GROUP[i]) {
-							// only affects groups enabled at time of key press
+                            // only affects groups enabled at time of key press
                             for (WeaponAPI weapon : group.getWeaponsCopy()) {
                                 if (weapon.hasAIHint(WeaponAPI.AIHints.PD) || weapon.hasAIHint(WeaponAPI.AIHints.PD_ONLY)
                                         || weapon.hasAIHint(WeaponAPI.AIHints.PD_ALSO)
                                         || (hasIPDAI && weapon.getSize() == WeaponSize.SMALL
-                                            && weapon.getType() != WeaponAPI.WeaponType.MISSILE)) {
-									// do not turn off PD or IPDAI weapon groups
-                                    QUICK_HOLD_GROUP[i] = false;
+                                        && weapon.getType() != WeaponAPI.WeaponType.MISSILE)) {
+                                    // do not turn off PD or IPDAI weapon groups
+                                    if(pressedCount == 0) QUICK_HOLD_GROUP[i] = false;//to not reset toggle
                                     break;
                                 }
                             }
@@ -94,6 +97,8 @@ public class ToggleWeaponsEveryFrame extends BaseEveryFrameCombatPlugin {
                             }
                         }
                     }
+                    if (IS_HOLD_A_TOGGLE) pressedCount++;
+                    //groups.get(pressedCount).setType(WeaponGroupType.ALTERNATING);//used to test current pressedCount
                     event.consume();
                 } else if (event.getEventValue() == DESLECT_ALL_WEAPONS) {
                     // According to Alex:
@@ -106,17 +111,34 @@ public class ToggleWeaponsEveryFrame extends BaseEveryFrameCombatPlugin {
 
             if (!event.isConsumed() && event.isKeyUpEvent()) {
                 if (event.getEventValue() == QUICK_HOLD_FIRE_KEY) {
-                    List<WeaponGroupAPI> groups = player.getWeaponGroupsCopy();
+                    if (IS_HOLD_A_TOGGLE) {
+                        if (pressedCount > 1) {
+                            List<WeaponGroupAPI> groups = player.getWeaponGroupsCopy();
+                            for (int i = 0; i < groups.size(); ++i) {
+                                WeaponGroupAPI group = groups.get(i);
 
-                    for (int i = 0; i < groups.size(); ++i) {
-                        WeaponGroupAPI group = groups.get(i);
+                                if (QUICK_HOLD_GROUP[i]) {
+                                    group.toggleOn();
+                                }
+                            }
 
-                        if (QUICK_HOLD_GROUP[i]) {
-                            group.toggleOn();
+                            event.consume();
+                            pressedCount = 0;
                         }
+                    } else {
+                        List<WeaponGroupAPI> groups = player.getWeaponGroupsCopy();
+                        for (int i = 0; i < groups.size(); ++i) {
+                            WeaponGroupAPI group = groups.get(i);
+
+                            if (QUICK_HOLD_GROUP[i]) {
+                                group.toggleOn();
+                            }
+                        }
+                        event.consume();
                     }
-                    event.consume();
                 }
+
+
             }
         }
     }
