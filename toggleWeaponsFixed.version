@@ -14,7 +14,7 @@
     # created after October 2012 will not have a Public folder, unfortunately.
     #
     # Example links for common hosts:
-    "masterVersionFile":"https://github.com/DrzymalaJakub/TWG/blob/master/toggleWeapons.version",
+    "masterVersionFile":"https://github.com/DrzymalaJakub/TWG/blob/master/toggleWeaponsFixed.version",
 
     "modName":"Toggle Weapon Group Fixed",
 
